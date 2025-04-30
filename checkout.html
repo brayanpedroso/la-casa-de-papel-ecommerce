@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Checkout - La Casa de Papel</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
     <header>
         <div class="container">
             <nav class="navbar">
                 <div class="logo">LA CASA DE PAPEL</div>
-                <!-- Botão de Voltar -->
                 <a href="index.html" class="btn voltar-btn">← Voltar à Loja</a>
             </nav>
         </div>
@@ -23,7 +22,6 @@
                 <!-- Itens do carrinho serão inseridos aqui via JS -->
             </div>
 
-            <!-- Resumo do carrinho -->
             <div class="cart-summary">
                 <p>Total: <span class="total-price" id="total-price">R$ 0,00</span></p>
                 <button class="btn checkout-btn" onclick="finalizarCompra()">Finalizar Compra</button>
@@ -36,47 +34,62 @@
         const cartContainer = document.getElementById('cart-items');
         const totalEl = document.getElementById('total-price');
 
+        function renderCart() {
+            cartContainer.innerHTML = ''; // limpa antes de renderizar
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                const price = parseFloat(item.price.replace('R$', '').replace(',', '.'));
+                const quantity = item.quantity || 1;
+                total += price * quantity;
+
+                const itemEl = document.createElement('div');
+                itemEl.classList.add('cart-item');
+                itemEl.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}" class="cart-item-img">
+                    <div class="cart-item-info">
+                        <h3 class="cart-item-title">${item.title}</h3>
+                        <p class="cart-item-price">${item.price}</p>
+                    </div>
+                    <div class="cart-item-actions">
+                        <input type="number" class="cart-item-quantity" value="${quantity}" min="1" data-index="${index}">
+                        <button class="btn remove-item" onclick="removeItem(${index})">Remover</button>
+                    </div>
+                `;
+                cartContainer.appendChild(itemEl);
+            });
+
+            totalEl.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+            bindQuantityInputs();
+        }
+
+        function bindQuantityInputs() {
+            document.querySelectorAll('.cart-item-quantity').forEach(input => {
+                input.addEventListener('change', function () {
+                    const index = this.dataset.index;
+                    const newQty = parseInt(this.value);
+                    if (newQty > 0) {
+                        cart[index].quantity = newQty;
+                        localStorage.setItem('cart', JSON.stringify(cart));
+                        renderCart();
+                    }
+                });
+            });
+        }
+
         function removeItem(index) {
             cart.splice(index, 1);
             localStorage.setItem('cart', JSON.stringify(cart));
-            location.reload();
+            renderCart();
         }
-
-        function calcularTotal() {
-            let total = 0;
-            const quantityInputs = document.querySelectorAll('.cart-item-quantity');
-            cart.forEach((item, index) => {
-                const quantity = parseInt(quantityInputs[index].value);
-                const price = parseFloat(item.price.replace('R$', '').replace(',', '.'));
-                total += price * quantity;
-            });
-            totalEl.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
-        }
-
-        cart.forEach((item, index) => {
-            const itemEl = document.createElement('div');
-            itemEl.classList.add('cart-item');
-            itemEl.innerHTML = `
-                <img src="${item.image}" alt="${item.title}" class="cart-item-img">
-                <div class="cart-item-info">
-                    <h3 class="cart-item-title">${item.title}</h3>
-                    <p class="cart-item-price">${item.price}</p>
-                </div>
-                <div class="cart-item-actions">
-                    <input type="number" class="cart-item-quantity" value="1" min="1" onchange="calcularTotal()">
-                    <button class="btn remove-item" onclick="removeItem(${index})">Remover</button>
-                </div>
-            `;
-            cartContainer.appendChild(itemEl);
-        });
-
-        calcularTotal();
 
         function finalizarCompra() {
             alert('Compra finalizada com sucesso!');
             localStorage.removeItem('cart');
             location.reload();
         }
+
+        renderCart();
     </script>
 </body>
 </html>
