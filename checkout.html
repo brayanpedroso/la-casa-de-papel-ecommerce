@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout - La Casa de Papel</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">LA CASA DE PAPEL</div>
+                <!-- Botão de Voltar -->
+                <a href="index.html" class="btn voltar-btn">← Voltar à Loja</a>
+            </nav>
+        </div>
+    </header>
+
+    <section id="carrinho" class="cart">
+        <div class="container">
+            <h2 class="section-title">Seu Carrinho</h2>
+            <div class="cart-items" id="cart-items">
+                <!-- Itens do carrinho serão inseridos aqui via JS -->
+            </div>
+
+            <!-- Resumo do carrinho -->
+            <div class="cart-summary">
+                <p>Total: <span class="total-price" id="total-price">R$ 0,00</span></p>
+                <button class="btn checkout-btn" onclick="finalizarCompra()">Finalizar Compra</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const cartContainer = document.getElementById('cart-items');
+        const totalEl = document.getElementById('total-price');
+
+        function removeItem(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            location.reload();
+        }
+
+        function calcularTotal() {
+            let total = 0;
+            const quantityInputs = document.querySelectorAll('.cart-item-quantity');
+            cart.forEach((item, index) => {
+                const quantity = parseInt(quantityInputs[index].value);
+                const price = parseFloat(item.price.replace('R$', '').replace(',', '.'));
+                total += price * quantity;
+            });
+            totalEl.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
+
+        cart.forEach((item, index) => {
+            const itemEl = document.createElement('div');
+            itemEl.classList.add('cart-item');
+            itemEl.innerHTML = `
+                <img src="${item.image}" alt="${item.title}" class="cart-item-img">
+                <div class="cart-item-info">
+                    <h3 class="cart-item-title">${item.title}</h3>
+                    <p class="cart-item-price">${item.price}</p>
+                </div>
+                <div class="cart-item-actions">
+                    <input type="number" class="cart-item-quantity" value="1" min="1" onchange="calcularTotal()">
+                    <button class="btn remove-item" onclick="removeItem(${index})">Remover</button>
+                </div>
+            `;
+            cartContainer.appendChild(itemEl);
+        });
+
+        calcularTotal();
+
+        function finalizarCompra() {
+            alert('Compra finalizada com sucesso!');
+            localStorage.removeItem('cart');
+            location.reload();
+        }
+    </script>
+</body>
+</html>
