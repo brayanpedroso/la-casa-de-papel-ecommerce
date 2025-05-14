@@ -284,4 +284,43 @@ header {
     .hero-content {
         padding: 10px;
     }
+       font-size: 0.95rem;
+    color: #555;
+    margin: 8px 0 12px;
+    line-height: 1.4;
+    font-style: italic;
+    display: flex;
+    align-items: flex-start;
+}
+
+
+
+
+
+.product-title {
+    color: #ff0000; /* Título do produto em vermelho */
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.product-price {
+    color: #ff0000; /* Preço em vermelho */
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 8px 0;
+}
+
+.product-description,
+.character-description {
+    color: #ffffff; /* branco puro */
+    font-size: 1rem;
+    margin: 8px 0 12px;
+    line-height: 1.5;
+}
+
+.product-description::before,
+.character-description::before {
+    content: "📝 ";
+    margin-right: 4px;
 }
