@@ -30,3 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'checkout.html';
     });
 });
+
+   if(typeof navigator.serviceWorker != 'undefined'){
+        navigator.serviceWorker.register('pwabuilder-sw.js')
+    }
