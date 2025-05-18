@@ -30,7 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'checkout.html';
     });
 });
-
-   if(typeof navigator.serviceWorker != 'undefined'){
-        navigator.serviceWorker.register('pwabuilder-sw.js')
-    };
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/pwabuilder-sw.js')
+      .then(reg => console.log('Service Worker registrado:', reg))
+      .catch(err => console.error('Erro ao registrar o Service Worker:', err));
+  });
+}
